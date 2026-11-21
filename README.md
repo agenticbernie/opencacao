@@ -2,6 +2,18 @@
 
 OpenCacao is a testnet workspace for cacao batch provenance, forward-purchase escrow, and Certainary climate coverage. The frontend reads contract state and events from Avalanche Fuji (chain ID `43113`) and sends writes through an injected wallet. Without deployment addresses it shows an unconfigured state, not simulated balances or records.
 
+## Deployed contracts — Avalanche Fuji
+
+Network: **Avalanche Fuji testnet**, chain ID **43113**. Deployment start block: **61418109**. All 22 deployment and seed transactions succeeded, and the Solidity source for all three contracts is **verified on Snowtrace**.
+
+| Contract | Address (links to verified source) | Deployment transaction |
+| --- | --- | --- |
+| MockUSDC | [`0x87005BC3344194015a9f4E1Ef74b59f8118030D7`](https://testnet.snowtrace.io/address/0x87005BC3344194015a9f4E1Ef74b59f8118030D7#code) | [Transaction](https://testnet.snowtrace.io/tx/0x25640cc4bf81c1d33a301d5e2091cfaffc62175c41ddf2d655d081e33852d698) |
+| OpenCacaoCore | [`0x67f21bb2626271ABc108c97D72A4987E8C5f7d66`](https://testnet.snowtrace.io/address/0x67f21bb2626271ABc108c97D72A4987E8C5f7d66#code) | [Transaction](https://testnet.snowtrace.io/tx/0xace864ed68c52194b32430d1126abf92ce036c5264b00e0f30062e926683b91f) |
+| CertainaryModule | [`0x93314E0853A3FB128954516020E625556F3a938E`](https://testnet.snowtrace.io/address/0x93314E0853A3FB128954516020E625556F3a938E#code) | [Transaction](https://testnet.snowtrace.io/tx/0x23da5346ed0fd62da22a76ab6fed245e6510f9ef35a270af66fbee6d3d633c2c) |
+
+These are demo testnet contracts, not audited production deployments. Local frontend configuration is generated in `frontend/.env.local`; restart or rebuild the frontend after changing deployment settings.
+
 ## Install and verify
 
 Install current Foundry (`forge`, `cast`) and Node.js 22 or newer. From the project root:
@@ -21,6 +33,8 @@ Skip the `forge install` commands if the libraries are already present. `--no-gi
 
 ## How to deploy to Avalanche Fuji
 
+Skip this section if you only want to host the frontend against the existing deployment. See [Deploy the frontend to Vercel](#deploy-the-frontend-to-vercel).
+
 1. Fund a dedicated testnet wallet with Fuji AVAX for gas. Copy `.env.example` to `.env` and enter its `0x`-prefixed private key **locally**. Do not share the key or place it in a `NEXT_PUBLIC_*` variable. That wallet will own the oracle and compliance permissions, the seeded farms and batches, and the initial underwriting offers.
 2. From the project root, run:
 
@@ -38,9 +52,27 @@ Skip the `forge install` commands if the libraries are already present. `--no-gi
 
 3. Open `http://localhost:3000`. Successful seeding creates **3 farms, 4 listed batches, 3 risk pools, and 3 underwriting offers**. The seed farms and owner attestations are demonstration records, not verified claims about actual farms. No escrow or coverage is matched at deployment.
 
-`scripts/configure-deployment.mjs` creates or replaces `frontend/.env.local` with the three contract addresses and deployment block from the Fuji broadcast receipts. Edit `NEXT_PUBLIC_FUJI_RPC_URL` there if the app should use a different Fuji RPC. For hosted builds set the variables in [`frontend/.env.example`](frontend/.env.example) before `npm run build`; Next.js embeds those public values at build time. Share the hosted URL for QR scans from another device.
+`scripts/configure-deployment.mjs` creates or replaces `frontend/.env.local` with the three contract addresses and deployment block from the Fuji broadcast receipts. Edit `NEXT_PUBLIC_FUJI_RPC_URL` there if the app should use a different Fuji RPC.
 
 If the frontend reports an RPC or deployment error, check that all three addresses have bytecode on Fuji, the RPC supports browser requests and historical logs, and the configured deployment block matches the broadcast. If a wallet transaction fails for insufficient funds, fund that wallet with **Fuji AVAX**; the app faucet only mints test mUSDC.
+
+## Deploy the frontend to Vercel
+
+You can host the Next.js app without redeploying any contracts. The frontend uses the ABIs already committed in `frontend/src/contracts`; Vercel does not need Foundry, broadcast receipts, or a wallet key.
+
+1. In the [Vercel dashboard](https://vercel.com/dashboard), create a project and import this GitHub repo. Set **Root Directory** to `frontend`, **Framework Preset** to **Next.js**, and **Node.js Version** to **22.x**. Use `npm ci` as the install command and `npm run build` as the build command. Leave the output directory at its default.
+2. Under **Environment Variables**, add these settings for **Production** and, if you want previews to use the same Fuji deployment, **Preview**. Enter each line as a separate name and value:
+
+   ```dotenv
+   NEXT_PUBLIC_FUJI_RPC_URL=https://api.avax-test.network/ext/bc/C/rpc
+   NEXT_PUBLIC_MOCK_USDC_ADDRESS=0x87005BC3344194015a9f4E1Ef74b59f8118030D7
+   NEXT_PUBLIC_CORE_ADDRESS=0x67f21bb2626271ABc108c97D72A4987E8C5f7d66
+   NEXT_PUBLIC_CERTAINARY_ADDRESS=0x93314E0853A3FB128954516020E625556F3a938E
+   NEXT_PUBLIC_DEPLOYMENT_BLOCK=61418109
+   ```
+
+   These values are public and embedded in the browser bundle at build time. **Do not upload the root `.env` or add `PRIVATE_KEY` to Vercel.** For a fresh contract deployment, use the public values from the generated `frontend/.env.local` instead. Redeploy the frontend after changing any of these variables.
+3. Click **Deploy**. Open the resulting HTTPS URL and check that the seeded batch listings load without connecting a wallet. Open a batch **Passport** and test its QR code from another device before sharing the URL. To send a transaction, connect a wallet on Avalanche Fuji with Fuji AVAX for gas.
 
 ## Judge walkthrough
 
