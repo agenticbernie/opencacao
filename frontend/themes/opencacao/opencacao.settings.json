@@ -1,0 +1,25 @@
+{
+  "name": "opencacao",
+  "like": "neutral",
+  "mode": "dark-only",
+  "settings": [
+    {
+      "thing": "--color-background-body",
+      "value": "#0B0F19",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "accent",
+      "value": "#10B981",
+      "source": "dial"
+    },
+    {
+      "thing": "warning",
+      "value": "#D97706",
+      "source": "dial"
+    }
+  ],
+  "lifted": [],
+  "palette": "d8bb0754a945f398b2c083e24115edf9b501523fab74e3b256b48e75cdbb7042"
+}

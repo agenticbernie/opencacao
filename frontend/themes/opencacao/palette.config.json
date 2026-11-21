@@ -1,0 +1,44 @@
+{
+  "recipe": "astryx-oklch-v2",
+  "modeStrategy": "light-and-dark",
+  "families": [
+    {
+      "id": "accent",
+      "name": "Accent",
+      "seed": "#10b981",
+      "anchors": [
+        {
+          "mode": "light",
+          "stop": 65,
+          "color": "#10b981",
+          "policy": "exact"
+        },
+        {
+          "mode": "dark",
+          "stop": 65,
+          "color": "#10b981",
+          "policy": "exact"
+        }
+      ]
+    },
+    {
+      "id": "warning",
+      "name": "Warning",
+      "seed": "#d97706",
+      "anchors": [
+        {
+          "mode": "light",
+          "stop": 60,
+          "color": "#d97706",
+          "policy": "exact"
+        },
+        {
+          "mode": "dark",
+          "stop": 60,
+          "color": "#d97706",
+          "policy": "exact"
+        }
+      ]
+    }
+  ]
+}

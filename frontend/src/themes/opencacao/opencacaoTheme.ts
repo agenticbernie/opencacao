@@ -1,0 +1,2 @@
+// Written by `astryx experimental theme editor show opencacao` after every build of themes/opencacao/; do not edit it here. Change the theme with the editor.
+export {opencacaoTheme, colorModes} from './opencacao';
